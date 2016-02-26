@@ -93,6 +93,11 @@ class GitterNotify implements \PHPCI\Plugin
         $body = $this->phpci->interpolate($this->message);
 
         $successfulBuild = $this->build->isSuccessful();
+
+        $statusMessage = $successfulBuild ? "SUCCESS" : "FAIL";
+
+        $body = str_replace('{{RESULT_STATUS}}', $statusMessage, $body);
+
         $logLevel = $successfulBuild ? Logger::INFO : Logger::ERROR;
         $this->logger->log($logLevel, $body);
 
