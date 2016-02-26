@@ -25,7 +25,7 @@ class GitterNotify implements \PHPCI\Plugin
     private $build;
     private $token;
     private $room;
-    private $message
+    private $message;
     private $show_status = true;
     private $logger;
 
@@ -46,9 +46,14 @@ class GitterNotify implements \PHPCI\Plugin
             if (isset($options['message'])) {
                 $this->message = $options['message'];
             } else {
-                $this->message = '<%PROJECT_URI%|%PROJECT_TITLE%> - <%BUILD_URI%|Build #%BUILD%> has finished ';
-                $this->message .= 'for commit <%COMMIT_URI%|%SHORT_COMMIT% (%COMMIT_EMAIL%)> ';
-                $this->message .= 'on branch <%BRANCH_URI%|%BRANCH%>';
+
+
+
+                $this->message = "%PROJECT_TITLE% Build #%BUILD% Result {{RESULT_STATUS}} \n";
+                $this->message .= "Push from %COMMIT_EMAIL% \n";
+                $this->message .= "on branch %BRANCH% \n";
+                $this->message .= "\n\n";
+                $this->message .= file_get_contents($this->build->getBuildPath() . '/build/reports/coverage.txt');
             }
 
             if (!isset($options['token'])) {
@@ -62,7 +67,7 @@ class GitterNotify implements \PHPCI\Plugin
             }
 
             $this->room = $options['room'];
-            $this->show_status = (isset($options['show_status']) ? (bool)$options['show_status'] : true;
+            $this->show_status = isset($options['show_status']) ? (bool)$options['show_status'] : true;
 
         } else {
             throw new \Exception('Gitter notify plugin requires room and token options to function');
