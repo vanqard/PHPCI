@@ -107,6 +107,8 @@ class GitterNotify implements \PHPCI\Plugin
         $this->buildStatus = ((bool) ((float)$matches['classpercent'] >= 80)) ? Build::STATUS_SUCCESS : Build::STATUS_FAILED;
         $this->build->setStatus($this->buildStatus);
 
+        $buildLink = "http://ec2-52-48-108-124.eu-west-1.compute.amazonaws.com/build/view/" . $this->build->getId();
+
         switch($this->buildStatus) {
             case Build::STATUS_FAILED:
                 $this->statusMessage = "Build failed: Unit test coverage too low";
@@ -116,7 +118,7 @@ class GitterNotify implements \PHPCI\Plugin
                 break;
         }
 
-        $returnVal .= "\n| Status |\n" . "| {$this->statusMessage} |";
+        $returnVal .= "\n| Status | [{$this->statusMessage}]($buildLink) |\n";
 
         return $returnVal;
     }
