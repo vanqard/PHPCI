@@ -53,7 +53,18 @@ class GitterNotify implements \PHPCI\Plugin
                 $this->message .= "Push from %COMMIT_EMAIL% \n";
                 $this->message .= "on branch %BRANCH% \n";
                 $this->message .= "\n\n";
-                $this->message .= file_get_contents($this->build->getBuildPath() . '/build/reports/coverage.txt');
+
+                $reportLines = file($this->build->getBuildPath() . '/build/reports/coverage.txt');
+
+                $line = array_shift($reportLines);
+                $phpunitSummary = [];
+
+                while(!empty($reportLines) && $line[0] != '\\') {
+                    $phpunitSummary[] = $line;
+                    $line = array_shift($reportLines);
+                }
+
+                $this->message .= implode("\n", $phpunitSummary);
             }
 
             if (!isset($options['token'])) {
