@@ -105,7 +105,7 @@ class GitterNotify implements \PHPCI\Plugin
 
 
         $this->buildStatus = ((bool) ((float)$matches['classpercent'] >= 80)) ? Build::STATUS_SUCCESS : Build::STATUS_FAILED;
-        $this->build->setStatus($status);
+        $this->build->setStatus($this->buildStatus);
 
         switch($status) {
             case Build::STATUS_FAILED:
@@ -158,7 +158,7 @@ class GitterNotify implements \PHPCI\Plugin
 
         $this->markAsRun();
 
-        echo $this->statusMessage;
+        $this->phpci->log($this->statusMessage);
 
         return (bool) $this->buildStatus == Build::STATUS_SUCCESS;
     }
