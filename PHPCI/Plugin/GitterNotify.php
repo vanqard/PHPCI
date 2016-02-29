@@ -53,18 +53,7 @@ class GitterNotify implements \PHPCI\Plugin
                 $this->message .= "Push from %COMMIT_EMAIL% \n";
                 $this->message .= "on branch %BRANCH% \n";
                 $this->message .= "\n\n";
-
-                $reportLines = file($this->build->getBuildPath() . '/build/reports/coverage.txt');
-
-                $line = array_shift($reportLines);
-                $phpunitSummary = [];
-
-                while(!empty($reportLines) && $line[0] != '\\') {
-                    $phpunitSummary[] = $line;
-                    $line = array_shift($reportLines);
-                }
-
-                $this->message .= implode("\n", $phpunitSummary);
+                $this->message .= $this->collectPhpUnitSummary();
             }
 
             if (!isset($options['token'])) {
@@ -94,6 +83,28 @@ class GitterNotify implements \PHPCI\Plugin
 
     }
 
+    private function collectPhpUnitSummary()
+    {
+        $reportLines = file_get_contents($this->build->getBuildPath() . '/build/reports/coverage.txt');
+
+
+        $pattern = "#(?<date>[-0-9]+)\s+(?<time>[:0-9]+)\s+Summary:\s+";
+        $pattern .= "(?<classname>[^:]+):\s+(?<classpercent>[^\s]+)\s+(?<classratio>[^\s]+)\s+";
+        $pattern .= "(?<methodname>[^:]+):\s+(?<methodpercent>[^\s]+)\s+(?<methodratio>[^\s]+)\s+";
+        $pattern .= "(?<linesname>[^:]+):\s+(?<linespercent>[^\s]+)\s+(?<linesratio>[^\s]+)#im";
+
+        preg_match($pattern, $string, $matches);
+
+        $returnVal = "
+        |        | Classes | Methods | Lines |
+        |--------|---------|---------|-------|
+        | Percent|{$matches['classpercent']}| {$matches['methodpercent']}| {$matches['linespercent']} |
+        | Ratio  |{$matches['classratio']} | {$matches['methodratio']} | {$matches['linesratio']} |
+        ";
+
+        return $returnVal;
+    }
+
     /**
      * Run the Gitter plugin.
      *
@@ -104,7 +115,7 @@ class GitterNotify implements \PHPCI\Plugin
         $body = $this->phpci->interpolate($this->message);
 
         $successfulBuild = $this->build->isSuccessful();
-        $statusMessage = $successfulBuild ? "SUCCESS" : "FAIL";
+        $statusMessage = $successfulBuild ? ":white_check_mark: SUCCESS :sunny: :beer:" : ":red_circle: FAIL :umbrella: :zap:";
 
         $body = str_replace('{{RESULT_STATUS}}', $statusMessage, $body);
         $body = json_encode( ["text" => $body]);
