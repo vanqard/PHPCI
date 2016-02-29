@@ -52,7 +52,8 @@
         "maknz/slack": "~1.7",
         "hipchat/hipchat-php": "~1.4",
         "mremi/flowdock": "~1.0",
-        "nackjicholson/monolog-gitter-im": "^1.0"
+        "nackjicholson/monolog-gitter-im": "^1.0",
+        "guzzlehttp/guzzle": "^6.1"
     },
 
     "require-dev": {

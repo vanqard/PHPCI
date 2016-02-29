@@ -93,14 +93,50 @@ class GitterNotify implements \PHPCI\Plugin
         $body = $this->phpci->interpolate($this->message);
 
         $successfulBuild = $this->build->isSuccessful();
-
         $statusMessage = $successfulBuild ? "SUCCESS" : "FAIL";
 
         $body = str_replace('{{RESULT_STATUS}}', $statusMessage, $body);
+        $body = json_encode( ["text" => $body]);
 
-        $logLevel = $successfulBuild ? Logger::INFO : Logger::ERROR;
-        $this->logger->log($logLevel, $body);
+        $url = "https://api.gitter.im";
+        $path = "/v1/rooms/{$this->room}/chatMessages";
+
+        $headers = [
+            "Authorization: Bearer {$this->token}",
+            "Content-Type: application/json",
+            "Accept: application/json"
+        ];
+
+        $this->curlSend($url, $path, $body, $headers);
 
         return true;
+    }
+
+    private function curlSend($url, $path, $payload, $headers, $verb = "POST") {
+
+
+        $ch = curl_init($url . $path);
+
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        switch ($verb) {
+            case "PUT":
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                break;
+            default:
+                curl_setopt($ch, CURLOPT_POST, true);
+                break;
+        }
+
+
+        $result = curl_exec($ch);
+
+        curl_close($ch);
+
+        return $result;
     }
 }
