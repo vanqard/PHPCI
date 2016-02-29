@@ -107,12 +107,12 @@ class GitterNotify implements \PHPCI\Plugin
         $this->buildStatus = ((bool) ((float)$matches['classpercent'] >= 80)) ? Build::STATUS_SUCCESS : Build::STATUS_FAILED;
         $this->build->setStatus($this->buildStatus);
 
-        switch($status) {
+        switch($this->buildStatus) {
             case Build::STATUS_FAILED:
                 $this->statusMessage = "Build failed: Unit test coverage too low";
                 break;
             case Build::STATUS_SUCCESS:
-                $this->statusMessage = "Build ok - Coverage threshold set to 80%";
+                $this->statusMessage = "Build ok - Coverage above 80% threshold";
                 break;
         }
 
