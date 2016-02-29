@@ -96,11 +96,10 @@ class GitterNotify implements \PHPCI\Plugin
         preg_match($pattern, $report, $matches);
 
         $returnVal = "
-        |        | Classes | Methods | Lines |
-        |--------|---------|---------|-------|
-        | Percent|{$matches['classpercent']}| {$matches['methodpercent']}| {$matches['linespercent']} |
-        | Ratio  |{$matches['classratio']} | {$matches['methodratio']} | {$matches['linesratio']} |
-        ";
+|         | Classes                   | Methods                     | Lines                      |
+|---------|---------------------------|-----------------------------|----------------------------|
+| Percent |{$matches['classpercent']} | {$matches['methodpercent']} | {$matches['linespercent']} |
+| Ratio   |{$matches['classratio']}   | {$matches['methodratio']}   | {$matches['linesratio']}   |";
 
         return $returnVal;
     }
