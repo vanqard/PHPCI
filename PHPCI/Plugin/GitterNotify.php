@@ -119,9 +119,13 @@ class GitterNotify implements \PHPCI\Plugin
         $body = $this->phpci->interpolate($this->message);
 
         $successfulBuild = $this->build->isSuccessful();
-        $statusMessage = $successfulBuild ? ":white_check_mark: SUCCESS :sunny: :beer:" : ":red_circle: FAIL :umbrella: :zap:";
+        $statusMessage = $successfulBuild ? "SUCCESS :sunny: :beer:" : "FAIL :umbrella: :zap:";
 
         $body = str_replace('{{RESULT_STATUS}}', $statusMessage, $body);
+
+
+        $body = ($successfulBuild ? ":white_check_mark: " : ":red_circle: ") . $body;
+
         $body = json_encode( ["text" => $body]);
 
         $url = "https://api.gitter.im";
