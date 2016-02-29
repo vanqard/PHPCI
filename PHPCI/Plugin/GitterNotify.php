@@ -85,7 +85,7 @@ class GitterNotify implements \PHPCI\Plugin
 
     private function collectPhpUnitSummary()
     {
-        $reportLines = file_get_contents($this->build->getBuildPath() . '/build/reports/coverage.txt');
+        $report = file_get_contents($this->build->getBuildPath() . '/build/reports/coverage.txt');
 
 
         $pattern = "#(?<date>[-0-9]+)\s+(?<time>[:0-9]+)\s+Summary:\s+";
@@ -93,7 +93,7 @@ class GitterNotify implements \PHPCI\Plugin
         $pattern .= "(?<methodname>[^:]+):\s+(?<methodpercent>[^\s]+)\s+(?<methodratio>[^\s]+)\s+";
         $pattern .= "(?<linesname>[^:]+):\s+(?<linespercent>[^\s]+)\s+(?<linesratio>[^\s]+)#im";
 
-        preg_match($pattern, $string, $matches);
+        preg_match($pattern, $report, $matches);
 
         $returnVal = "
         |        | Classes | Methods | Lines |
