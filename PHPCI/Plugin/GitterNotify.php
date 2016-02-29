@@ -28,6 +28,7 @@ class GitterNotify implements \PHPCI\Plugin
     private $message;
     private $show_status = true;
     private $logger;
+    private $buildSuccess = true;
 
     /**
      * Set up the plugin, configure options, etc.
@@ -101,6 +102,9 @@ class GitterNotify implements \PHPCI\Plugin
 | Percent |{$matches['classpercent']} | {$matches['methodpercent']} | {$matches['linespercent']} |
 | Ratio   |{$matches['classratio']}   | {$matches['methodratio']}   | {$matches['linesratio']}   |";
 
+
+        $this->buildSuccess = (bool) ((float)$matches['classpercent'] >= 80);
+
         return $returnVal;
     }
 
@@ -141,7 +145,7 @@ class GitterNotify implements \PHPCI\Plugin
 
         $this->markAsRun();
 
-        return true;
+        return (bool) $this->buildSuccess;
     }
 
     private function markAsRun()
