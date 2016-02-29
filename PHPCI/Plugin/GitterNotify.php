@@ -103,7 +103,8 @@ class GitterNotify implements \PHPCI\Plugin
 | Ratio   |{$matches['classratio']}   | {$matches['methodratio']}   | {$matches['linesratio']}   |";
 
 
-        $this->buildSuccess = (bool) ((float)$matches['classpercent'] >= 80);
+        $status = ((bool) ((float)$matches['classpercent'] >= 80)) ? \PHPCI\Model\Build::STATUS_SUCCESS : \PHPCI\Model\Build::STATUS_FAILED;
+        $this->build->setStatus($status);
 
         return $returnVal;
     }
@@ -145,7 +146,7 @@ class GitterNotify implements \PHPCI\Plugin
 
         $this->markAsRun();
 
-        return (bool) $this->buildSuccess;
+        return true;
     }
 
     private function markAsRun()
