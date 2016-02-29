@@ -28,7 +28,7 @@ class GitterNotify implements \PHPCI\Plugin
     private $message;
     private $show_status = true;
     private $logger;
-
+    private $buildStatus;
     private $statusMessage = "Build passed";
 
     /**
@@ -104,7 +104,7 @@ class GitterNotify implements \PHPCI\Plugin
 | Ratio   |{$matches['classratio']}   | {$matches['methodratio']}   | {$matches['linesratio']}   |";
 
 
-        $status = ((bool) ((float)$matches['classpercent'] >= 80)) ? Build::STATUS_SUCCESS : Build::STATUS_FAILED;
+        $this->buildStatus = ((bool) ((float)$matches['classpercent'] >= 80)) ? Build::STATUS_SUCCESS : Build::STATUS_FAILED;
         $this->build->setStatus($status);
 
         switch($status) {
@@ -116,7 +116,7 @@ class GitterNotify implements \PHPCI\Plugin
                 break;
         }
 
-        $returnVal .= "| Status |\n" . "| {$this->statusMessage} |";
+        $returnVal .= "\n| Status |\n" . "| {$this->statusMessage} |";
 
         return $returnVal;
     }
@@ -158,7 +158,9 @@ class GitterNotify implements \PHPCI\Plugin
 
         $this->markAsRun();
 
-        return true;
+        echo $this->statusMessage;
+
+        return (bool) $this->buildStatus == Build::STATUS_SUCCESS;
     }
 
     private function markAsRun()
