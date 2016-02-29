@@ -28,7 +28,8 @@ class GitterNotify implements \PHPCI\Plugin
     private $message;
     private $show_status = true;
     private $logger;
-    private $buildSuccess = true;
+
+    private $statusMessage = "Build passed";
 
     /**
      * Set up the plugin, configure options, etc.
@@ -103,8 +104,19 @@ class GitterNotify implements \PHPCI\Plugin
 | Ratio   |{$matches['classratio']}   | {$matches['methodratio']}   | {$matches['linesratio']}   |";
 
 
-        $status = ((bool) ((float)$matches['classpercent'] >= 80)) ? \PHPCI\Model\Build::STATUS_SUCCESS : \PHPCI\Model\Build::STATUS_FAILED;
+        $status = ((bool) ((float)$matches['classpercent'] >= 80)) ? Build::STATUS_SUCCESS : Build::STATUS_FAILED;
         $this->build->setStatus($status);
+
+        switch($status) {
+            case Build::STATUS_FAILED:
+                $this->statusMessage = "Build failed: Unit test coverage too low";
+                break;
+            case Build::STATUS_SUCCESS:
+                $this->statusMessage = "Build ok - Coverage threshold set to 80%";
+                break;
+        }
+
+        $returnVal .= "| Status |\n" . "| {$this->statusMessage} |";
 
         return $returnVal;
     }
