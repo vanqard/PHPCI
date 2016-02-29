@@ -111,6 +111,11 @@ class GitterNotify implements \PHPCI\Plugin
      */
     public function execute()
     {
+
+        if ($this->hasRun()) {
+            return true; // nothing to do
+        }
+
         $body = $this->phpci->interpolate($this->message);
 
         $successfulBuild = $this->build->isSuccessful();
@@ -130,7 +135,20 @@ class GitterNotify implements \PHPCI\Plugin
 
         $this->curlSend($url, $path, $body, $headers);
 
+        $this->markAsRun();
+
         return true;
+    }
+
+    private function markAsRun()
+    {
+        $fileName = $this->build->getBuildPath();
+        return touch($fileName);
+    }
+
+    private function hasRun()
+    {
+        return file_exists($this->build->getBuildPath() . '/gitter.notified');
     }
 
     private function curlSend($url, $path, $payload, $headers, $verb = "POST") {
