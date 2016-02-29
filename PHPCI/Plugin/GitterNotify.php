@@ -118,7 +118,7 @@ class GitterNotify implements \PHPCI\Plugin
                 break;
         }
 
-        $returnVal .= "\n| Status | [{$this->statusMessage}]($buildLink) |\n";
+        $returnVal .= "\n **Status**: [{$this->statusMessage}]($buildLink) \n";
 
         return $returnVal;
     }
