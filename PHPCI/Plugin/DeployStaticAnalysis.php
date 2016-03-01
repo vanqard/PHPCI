@@ -59,6 +59,20 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
             throw new \Exception(Lang::get('failed_to_wipe', $destDir));
         }
 
-        return rename($srcDir, $destDir);
+        $moveResult = rename($srcDir, $destDir);
+
+        switch($moveResult) {
+            case true:
+                $logMessage = "Coverage reports deployed at ";
+                $logMessage .= "http://ec2-52-48-108-124.eu-west-1.compute.amazonaws.com/reports";
+                $this->phpci->logSuccess($logMessage);
+                break;
+            default:
+                $logMessage = "Oopsies";
+                $this->phpci->logFailure($logMessage);
+                break;
+        }
+
+        return ;
     }
 }
