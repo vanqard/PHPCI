@@ -55,10 +55,10 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
         $success = $this->phpci->executeCommand($cmd, $destDir);
 
         if (!$success) {
+            // Wipe failed - exception here
             throw new \Exception(Lang::get('failed_to_wipe', $destDir));
         }
 
-        // Attempt to move the reports directory
         return rename($srcDir, $destDir);
     }
 }
