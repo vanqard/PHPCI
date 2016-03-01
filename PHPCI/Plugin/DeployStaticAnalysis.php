@@ -49,9 +49,16 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
     public function execute()
     {
         $srcDir = $this->build->getBuildPath() . '/build/logs/report';
-        $destDir = APPLICATION_PATH . 'public/reports/' . $this->build->getId();
+        $destDir = APPLICATION_PATH . 'public/reports';
 
-        // Attempt to move the directory
+        $cmd = 'rm -Rf "%s*"';
+        $success = $this->phpci->executeCommand($cmd, $destDir);
+
+        if (!$success) {
+            throw new \Exception(Lang::get('failed_to_wipe', $destDir));
+        }
+
+        // Attempt to move the reports directory
         return rename($srcDir, $destDir);
     }
 }
