@@ -41,7 +41,7 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
 
         $this->options = $options;
 
-        $this->>reportUrl = PHPCI_URL . "/reports/";
+        $this->reportUrl = PHPCI_URL . "/reports/";
     }
 
 

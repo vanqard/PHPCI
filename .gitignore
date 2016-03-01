@@ -18,3 +18,4 @@ local_vars.php
 Tests/PHPCI/config.yml
 missfont.log
 /logs/phpci.build.log
+scratch
