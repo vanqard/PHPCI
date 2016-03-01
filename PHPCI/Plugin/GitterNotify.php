@@ -111,10 +111,10 @@ class GitterNotify implements \PHPCI\Plugin
 
         switch($this->buildStatus) {
             case Build::STATUS_FAILED:
-                $this->statusMessage = "Build failed: Unit test coverage too low";
+                $this->statusMessage = "Test coverage below threshold (80%)";
                 break;
             case Build::STATUS_SUCCESS:
-                $this->statusMessage = "Build ok - Coverage above 80% threshold";
+                $this->statusMessage = "Test coverage above threshold (80%)";
                 break;
         }
 
