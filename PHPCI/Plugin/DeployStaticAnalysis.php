@@ -77,6 +77,6 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
                 break;
         }
 
-        return ;
+        return true;
     }
 }
