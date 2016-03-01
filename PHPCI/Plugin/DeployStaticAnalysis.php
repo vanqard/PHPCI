@@ -79,7 +79,7 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
         switch($moveResult) {
             case true:
                 $logMessage = "Coverage reports deployed at ";
-                $logMessage .= "<a href=\"{$this->reportUrl}\">{$this->reportUrl}</a>";
+                $logMessage .= "{$this->reportUrl}";
                 $this->phpci->logSuccess($logMessage);
                 break;
             default:

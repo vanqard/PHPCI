@@ -107,7 +107,7 @@ class GitterNotify implements \PHPCI\Plugin
         $this->buildStatus = ((bool) ((float)$matches['classpercent'] >= 80)) ? Build::STATUS_SUCCESS : Build::STATUS_FAILED;
         $this->build->setStatus($this->buildStatus);
 
-        $buildLink = "http://ec2-52-48-108-124.eu-west-1.compute.amazonaws.com/build/view/" . $this->build->getId();
+        $buildLink = PHPCI_URL . "/build/view/" . $this->build->getId();
 
         switch($this->buildStatus) {
             case Build::STATUS_FAILED:
@@ -119,6 +119,10 @@ class GitterNotify implements \PHPCI\Plugin
         }
 
         $returnVal .= "\n **Status**: [{$this->statusMessage}]($buildLink) \n";
+
+
+        $coverageUrl = PHPCI_URL . '/reports';
+        $returnVal .= "\n **Reports**: [Code coverage]({$coverageUrl})\n";
 
         return $returnVal;
     }
