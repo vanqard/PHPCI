@@ -25,6 +25,9 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
     protected $build;
     protected $options;
 
+    protected $reportUrl;
+
+
     /**
      * Set up the plugin, configure options, etc.
      * @param Builder $phpci
@@ -37,10 +40,13 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
         $this->build     = $build;
 
         $this->options = $options;
+
+        $this->>reportUrl = PHPCI_URL . "/reports/";
     }
 
 
     /**
+     *
      * Moves the static analysis log files into doc root before the build is destroyed
      *
      * @return bool
@@ -51,10 +57,15 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
         $srcDir = $this->build->getBuildPath() . '/build/logs/report';
         $destDir = APPLICATION_PATH . 'public/reports';
 
-        $cmd = 'rm -Rf "%s*"';
-        $success = $this->phpci->executeCommand($cmd, $destDir);
 
-        if (!$success) {
+        $result = exec(
+            sprintf(IS_WIN ? 'rmdir /S /Q "%s"' : 'rm -Rf "%s"', $destDir),
+            $output,
+            $exitStatus
+        );
+
+        // Non-zero status is an error scenario
+        if ($exitStatus !== 0) {
             // Wipe failed - exception here
             throw new \Exception(Lang::get('failed_to_wipe', $destDir));
         }
@@ -68,7 +79,7 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
         switch($moveResult) {
             case true:
                 $logMessage = "Coverage reports deployed at ";
-                $logMessage .= "http://ec2-52-48-108-124.eu-west-1.compute.amazonaws.com/reports";
+                $logMessage .= "<a href=\"{$this->reportUrl}\">{$this->reportUrl}</a>";
                 $this->phpci->logSuccess($logMessage);
                 break;
             default:
