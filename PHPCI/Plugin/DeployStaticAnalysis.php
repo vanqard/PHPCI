@@ -59,7 +59,11 @@ class DeployStaticAnalysis implements \PHPCI\Plugin
             throw new \Exception(Lang::get('failed_to_wipe', $destDir));
         }
 
-        $moveResult = rename($srcDir, $destDir);
+        $moveResult = false;
+
+        if (!is_dir($destDir)) {
+            $moveResult = rename($srcDir, $destDir);
+        }
 
         switch($moveResult) {
             case true:
