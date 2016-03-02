@@ -119,13 +119,13 @@ class GitterNotify implements \PHPCI\Plugin
         switch($this->buildStatus) {
             case Build::STATUS_FAILED:
                 $this->statusMessage = "Test coverage below threshold (80%)";
-                $this->statusIcons = ":umbrella: :zap:"
+                $this->statusIcons = ":umbrella: :zap:";
                 break;
             case Build::STATUS_SUCCESS:
                 $this->statusMessage = "Test coverage above threshold (80%)";
                 $this->statusIcons = ":sunny:";
 
-                if ((int)$matches['classpercent'] > 99) {
+                if ((int)$matches['classpercent'] > 90) {
                     $this->statusIcons .= " :beer:";
                 }
                 break;
