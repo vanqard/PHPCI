@@ -30,6 +30,7 @@ class GitterNotify implements \PHPCI\Plugin
     private $logger;
     private $buildStatus;
     private $statusMessage = "Build passed";
+    private $reportPath = "";
 
     /**
      * Set up the plugin, configure options, etc.
@@ -45,17 +46,8 @@ class GitterNotify implements \PHPCI\Plugin
 
         if (is_array($options)) {
 
-            if (isset($options['message'])) {
-                $this->message = $options['message'];
-            } else {
-
-
-
-                $this->message = "%PROJECT_TITLE% Build #%BUILD% Result {{RESULT_STATUS}} \n";
-                $this->message .= "Push from %COMMIT_EMAIL% \n";
-                $this->message .= "on branch %BRANCH% \n";
-                $this->message .= "\n\n";
-                $this->message .= $this->collectPhpUnitSummary();
+            if (isset($options['report_path'])) {
+                $this->reportPath = $options['report_path'];
             }
 
             if (!isset($options['token'])) {
@@ -67,14 +59,19 @@ class GitterNotify implements \PHPCI\Plugin
             if (!isset($options['room'])) {
                 throw new \Exception('Room must be specified with Gitter plugin');
             }
-
             $this->room = $options['room'];
+
+            $this->message = "%PROJECT_TITLE% Build #%BUILD% Result {{RESULT_STATUS}} \n";
+            $this->message .= "Push from %COMMIT_EMAIL% \n";
+            $this->message .= "on branch %BRANCH% \n";
+            $this->message .= "\n\n";
+            $this->message .= $this->collectPhpUnitSummary();
+
             $this->show_status = isset($options['show_status']) ? (bool)$options['show_status'] : true;
 
         } else {
             throw new \Exception('Gitter notify plugin requires room and token options to function');
         }
-
 
         $logger = new Logger('phpci.gitter.buildLogger');
         $logger->pushHandler(
