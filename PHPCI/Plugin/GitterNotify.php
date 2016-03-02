@@ -84,7 +84,7 @@ class GitterNotify implements \PHPCI\Plugin
 
     private function collectPhpUnitSummary()
     {
-        $report = file_get_contents($this->build->getBuildPath() . '/build/reports/coverage.txt');
+        $report = file_get_contents($this->build->getBuildPath() . $this->reportPath);
 
 
         $pattern = "#(?<date>[-0-9]+)\s+(?<time>[:0-9]+)\s+Summary:\s+";
