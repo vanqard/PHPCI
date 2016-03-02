@@ -31,6 +31,7 @@ class GitterNotify implements \PHPCI\Plugin
     private $buildStatus;
     private $statusMessage = "Build passed";
     private $reportPath = "";
+    private $statusIcons = ":scream:";
 
     /**
      * Set up the plugin, configure options, etc.
@@ -118,9 +119,15 @@ class GitterNotify implements \PHPCI\Plugin
         switch($this->buildStatus) {
             case Build::STATUS_FAILED:
                 $this->statusMessage = "Test coverage below threshold (80%)";
+                $this->statusIcons = ":umbrella: :zap:"
                 break;
             case Build::STATUS_SUCCESS:
                 $this->statusMessage = "Test coverage above threshold (80%)";
+                $this->statusIcons = ":sunny:";
+
+                if ((int)$matches['classpercent'] > 99) {
+                    $this->statusIcons .= " :beer:";
+                }
                 break;
         }
 
@@ -129,6 +136,8 @@ class GitterNotify implements \PHPCI\Plugin
 
         $coverageUrl = PHPCI_URL . '/reports';
         $returnVal .= "\n **Reports**: [Code coverage]({$coverageUrl})\n";
+
+
 
         return $returnVal;
     }
@@ -148,7 +157,8 @@ class GitterNotify implements \PHPCI\Plugin
         $body = $this->phpci->interpolate($this->message);
 
         $successfulBuild = $this->build->isSuccessful();
-        $statusMessage = $successfulBuild ? "SUCCESS :sunny: :beer:" : "FAIL :umbrella: :zap:";
+        $statusMessage = $successfulBuild ? "SUCCESS " : "FAIL ";
+        $statusMessage .= $this->statusIcons;
 
         $body = str_replace('{{RESULT_STATUS}}', $statusMessage, $body);
 
