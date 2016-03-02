@@ -85,6 +85,10 @@ class GitterNotify implements \PHPCI\Plugin
     private function collectPhpUnitSummary()
     {
         $reportPath = $this->build->getBuildPath() . $this->reportPath;
+        if (!file_exists($reportPath)) {
+            return "Coverage report [{$reportPath}] does not exist in build dir";
+        }
+
         $report = file_get_contents($reportPath);
 
 
